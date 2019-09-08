@@ -30,7 +30,8 @@ defmodule Fifo.MixProject do
     [
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:credo_contrib, "~> 0.2", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0-rc", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0-rc", only: [:dev, :test], runtime: false},
+      {:rustler, "~> 0.21.0"}
     ]
   end
 end
