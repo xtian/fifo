@@ -20,17 +20,17 @@ mod atoms {
 rustler::rustler_export_nifs! {
     "Elixir.Fifo.Native",
     [
-        ("open_readonly", 1, open_readonly),
-        ("open_writeonly", 1, open_writeonly)
+        ("open_file_readonly", 1, open_file_readonly),
+        ("open_file_writeonly", 1, open_file_writeonly)
     ],
     None
 }
 
-fn open_readonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+fn open_file_readonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     do_open(env, args, OFlag::O_RDONLY)
 }
 
-fn open_writeonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+fn open_file_writeonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     do_open(env, args, OFlag::O_WRONLY)
 }
 
