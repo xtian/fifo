@@ -10,3 +10,11 @@ mix format --check-formatted
 mix compile --all-warnings --warnings-as-errors
 mix credo
 mix test
+
+(
+  cd native/fifo_native
+
+  cargo fmt --all -- --check
+  cargo clippy -- -D warnings
+  cargo test
+)
