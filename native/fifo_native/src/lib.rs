@@ -1,25 +1,44 @@
+extern crate nix;
+#[macro_use]
+extern crate rustler;
+
+use nix::{
+    fcntl::{self, OFlag},
+    sys::stat::Mode,
+};
+
 use rustler::{Encoder, Env, Error, Term};
+use std::error::Error as _;
 
 mod atoms {
     rustler_atoms! {
         atom ok;
-        //atom error;
-        //atom __true__ = "true";
-        //atom __false__ = "false";
+        atom error;
     }
 }
 
 rustler::rustler_export_nifs! {
     "Elixir.Fifo.Native",
     [
-        ("add", 2, add)
+        ("open_readonly", 1, open_readonly),
+        ("open_writeonly", 1, open_writeonly)
     ],
     None
 }
 
-fn add<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
-    let num1: i64 = args[0].decode()?;
-    let num2: i64 = args[1].decode()?;
+fn open_readonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+    do_open(env, args, OFlag::O_RDONLY)
+}
 
-    Ok((atoms::ok(), num1 + num2).encode(env))
+fn open_writeonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+    do_open(env, args, OFlag::O_WRONLY)
+}
+
+fn do_open<'a>(env: Env<'a>, args: &[Term<'a>], flag: OFlag) -> Result<Term<'a>, Error> {
+    let path: String = args[0].decode()?;
+    let flags = OFlag::O_NONBLOCK | flag;
+
+    fcntl::open(path.as_str(), flags, Mode::empty())
+        .map({ |fd| (atoms::ok(), fd).encode(env) })
+        .or_else({ |err| Ok((atoms::error(), err.description()).encode(env)) })
 }
