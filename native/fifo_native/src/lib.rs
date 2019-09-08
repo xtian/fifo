@@ -8,7 +8,7 @@ use nix::{
 };
 
 use rustler::{Encoder, Env, Error, Term};
-use std::error::Error as _;
+use std::{error::Error as _, io::Error as IoError};
 
 mod atoms {
     rustler_atoms! {
@@ -26,6 +26,13 @@ rustler::rustler_export_nifs! {
     None
 }
 
+#[derive(NifStruct)]
+#[module = "Fifo.FifoError"]
+struct FifoError<'a> {
+    pub description: &'a str,
+    pub errno: Option<i32>,
+}
+
 fn open_file_readonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     do_open(env, args, OFlag::O_RDONLY)
 }
@@ -40,5 +47,16 @@ fn do_open<'a>(env: Env<'a>, args: &[Term<'a>], flag: OFlag) -> Result<Term<'a>,
 
     fcntl::open(path, flags, Mode::empty())
         .map({ |fd| (atoms::ok(), fd).encode(env) })
-        .or_else({ |err| Ok((atoms::error(), err.description()).encode(env)) })
+        .or_else({
+            |err| {
+                let fifo_error = FifoError {
+                    description: err.description(),
+                    errno: err
+                        .as_errno()
+                        .and_then({ |e| IoError::from(e).raw_os_error() }),
+                };
+
+                Ok((atoms::error(), fifo_error).encode(env))
+            }
+        })
 }

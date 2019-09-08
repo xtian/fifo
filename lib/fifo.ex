@@ -1,7 +1,16 @@
 defmodule Fifo do
   @moduledoc false
 
-  @spec stream(String.t()) :: {:ok, Enum.t()} | {:error, String.t()}
+  defmodule FifoError do
+    defexception [:description, :errno]
+
+    def message(error) do
+      errno = if error.errno, do: "(errno: #{error.errno})"
+      "#{error.description} #{errno}"
+    end
+  end
+
+  @spec stream(String.t()) :: {:ok, Enum.t()} | {:error, %FifoError{}}
   def stream(filename, options \\ []) do
     with {:ok, fd} <- Fifo.Native.open_file_readonly(filename) do
       stream =
@@ -20,6 +29,14 @@ defmodule Fifo do
         )
 
       {:ok, stream}
+    end
+  end
+
+  @spec stream!(String.t()) :: Enum.t() | no_return
+  def stream!(filename, options \\ []) do
+    case stream(filename, options) do
+      {:ok, stream} -> stream
+      {:error, error} -> raise FifoError, description: error.description, errno: error.errno
     end
   end
 
