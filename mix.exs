@@ -21,8 +21,8 @@ defmodule Fifo.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 1.1"},
-      {:credo_contrib, "~> 0.2.0"}
+      {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:credo_contrib, "~> 0.2", only: [:dev, :test], runtime: false}
     ]
   end
 end
