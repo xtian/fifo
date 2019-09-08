@@ -22,7 +22,7 @@ defmodule FifoTest do
         for value <- stream, do: send(test_pid, {:value, value})
       end)
 
-      value = Enum.take_random(?0..?z, 1)
+      value = Enum.take_random(?a..?z, 1)
       {_, 0} = System.cmd("/bin/sh", ["-c", "echo #{value} > #{@filename}"])
 
       byte = Enum.at(value, 0)
