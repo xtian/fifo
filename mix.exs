@@ -12,6 +12,8 @@ defmodule Fifo.MixProject do
       version: @version,
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
+      compilers: [:rustler] ++ Mix.compilers(),
+      rustler_crates: rustler_crates(),
       deps: deps(),
       dialyzer: [
         flags: [
@@ -60,4 +62,13 @@ defmodule Fifo.MixProject do
       links: %{"GitHub" => @github_url}
     ]
   end
+
+  defp rustler_crates do
+    [
+      fifo_native: [path: "native/fifo_native", mode: rustc_mode(Mix.env())]
+    ]
+  end
+
+  defp rustc_mode(:prod), do: :release
+  defp rustc_mode(_), do: :debug
 end
