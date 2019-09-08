@@ -1,10 +1,15 @@
 defmodule Fifo.MixProject do
   use Mix.Project
 
+  @github_url "https://github.com/xtian/fifo"
+  @version "0.1.0"
+
+  @description "Modern utilities for working with named pipes (FIFOs)"
+
   def project do
     [
       app: :fifo,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -14,6 +19,19 @@ defmodule Fifo.MixProject do
           :race_conditions,
           :unmatched_returns
         ]
+      ],
+
+      # Hex
+      description: @description,
+      package: package(),
+
+      # Docs
+      name: "Fifo",
+      docs: [
+        main: "readme",
+        extras: ["README.md"],
+        source_ref: "v#{@version}",
+        source_url: @github_url
       ]
     ]
   end
@@ -32,6 +50,14 @@ defmodule Fifo.MixProject do
       {:credo_contrib, "~> 0.2", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0-rc", only: [:dev, :test], runtime: false},
       {:rustler, "~> 0.21.0"}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Christian Wesselhoeft"],
+      licenses: ["ISC"],
+      links: %{"GitHub" => @github_url}
     ]
   end
 end
