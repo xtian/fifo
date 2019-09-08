@@ -35,10 +35,10 @@ fn open_file_writeonly<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, 
 }
 
 fn do_open<'a>(env: Env<'a>, args: &[Term<'a>], flag: OFlag) -> Result<Term<'a>, Error> {
-    let path: String = args[0].decode()?;
+    let path: &str = args[0].decode()?;
     let flags = OFlag::O_NONBLOCK | flag;
 
-    fcntl::open(path.as_str(), flags, Mode::empty())
+    fcntl::open(path, flags, Mode::empty())
         .map({ |fd| (atoms::ok(), fd).encode(env) })
         .or_else({ |err| Ok((atoms::error(), err.description()).encode(env)) })
 }
