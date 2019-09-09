@@ -32,7 +32,7 @@ defmodule Fifo do
     end
   end
 
-  @spec stream!(String.t()) :: Enum.t() | no_return
+  @spec stream!(String.t()) :: Enum.t()
   def stream!(filename, options \\ []) do
     case stream(filename, options) do
       {:ok, stream} -> stream
