@@ -1,11 +1,10 @@
 # Fifo
 
-**TODO: Add description**
+Modern utilities for working with Unix named pipes (FIFOs)
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `fifo` to your list of dependencies in `mix.exs`:
+Add `fifo` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +14,21 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/fifo](https://hexdocs.pm/fifo).
+## Usage
+
+You can operate on a stream of bytes:
+
+```elixir
+"path/to/fifo"
+|> Fifo.stream!()
+|> Enum.each(fn byte -> do_something(byte) end)
+```
+
+Or you can opt to receive a stream of binaries:
+
+```elixir
+"path/to/fifo"
+|> Fifo.stream!([:binary])
+|> Enum.each(fn binary -> do_something(binary) end)
+```
 
